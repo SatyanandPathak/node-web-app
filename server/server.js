@@ -19,29 +19,24 @@ var io = socketIO(server);
 // Create a connection event. This will have access to socket
 io.on('connection', (socket) => {
     console.log('new user connected');
+
+    // socket.emit emits and event to a single connection
+    // Listen to the client createMessage event and publish
+    // it to all the connections using io.emit
+    socket.on('createMessage', (newMessage) => {
+        console.log('Server: Received a new message:', newMessage);
+        // io.emit emits an event to every single connection
+        // Emit the new Message received 
+        io.emit('newMessage', {
+            from: newMessage.from,
+            text: newMessage.text,
+            createdAt: new Date().toString().substring(0, 24)
+        });
+    });
+
     // Listen to disconnect event from client/user
     socket.on('disconnect', () => {
         console.log('user/client was disconnected');
-    });
-
-    socket.emit('newEmail', {
-        from: 'Satyanand.Pathak@gmail',
-        subject: 'Hi',
-        text: 'How are you doing'
-    });
-
-    // Emit a message from the server to the subscribed clients
-    socket.emit('newMessage', {
-        from: 'Satyanand123',
-        text: 'Hi all',
-        createdAt: new Date().toString().substring(0, 24)
-    });
-
-    // socket.on('createEmail', (newEmail)=> {
-    //     console.log('Created new email:', newEmail)
-    // })
-    socket.on('createMessage', (newMessage) => {
-        console.log('Server: Received a new message:', newMessage);
     });
 
 });
