@@ -22,7 +22,28 @@ io.on('connection', (socket) => {
     // Listen to disconnect event from client/user
     socket.on('disconnect', () => {
         console.log('user/client was disconnected');
-    })
+    });
+
+    socket.emit('newEmail', {
+        from: 'Satyanand.Pathak@gmail',
+        subject: 'Hi',
+        text: 'How are you doing'
+    });
+
+    // Emit a message from the server to the subscribed clients
+    socket.emit('newMessage', {
+        from: 'Satyanand123',
+        text: 'Hi all',
+        createdAt: new Date().toString().substring(0, 24)
+    });
+
+    // socket.on('createEmail', (newEmail)=> {
+    //     console.log('Created new email:', newEmail)
+    // })
+    socket.on('createMessage', (newMessage) => {
+        console.log('Server: Received a new message:', newMessage);
+    });
+
 });
 
 
