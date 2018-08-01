@@ -8,7 +8,7 @@ socket.on('connect', function (){
 
 // Subscribe and receive for any new chats events from the server
 socket.on('newMessage', function(chatMessage){
-    console.log('Received new chat:', chatMessage);
+    console.log('Client Received a new chat from Server, Listening to newMessage event:', chatMessage);
 });
 
 socket.on('disconnect', function() {

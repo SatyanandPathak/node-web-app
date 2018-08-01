@@ -20,21 +20,40 @@ var io = socketIO(server);
 io.on('connection', (socket) => {
     console.log('new user connected');
 
+    // Send message from Admin text when someone joins
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to chat app'
+    });
+    // Broadcast that event to others saying new user has joined 
+    socket.broadcast.emit('newMessage', {
+        from : 'Admin',
+        text: 'New User joined',
+        createdAt: new Date().toDateString()
+    });
+
     // socket.emit emits and event to a single connection
     // Listen to the client createMessage event and publish
     // it to all the connections using io.emit
-    socket.on('createMessage', (newMessage) => {
-        console.log('Server: Received a new message:', newMessage);
-        // io.emit emits an event to every single connection
-        // Emit the new Message received 
+
+    /**
+     * Listen to createMessage event from the client. If some client send a new Message
+     * Use socket.on to listen to a specific event from a client connection
+     * Use io.emit to emit an event to all the client subscribers
+     * 
+     */
+    // Listen createMessage event from client connections
+    socket.on('createMessage', (message) => {
+        console.log('Server: Received a new message:', message);
+        // Emit the message to every client connection
         io.emit('newMessage', {
-            from: newMessage.from,
-            text: newMessage.text,
+            from: message.from,
+            text: message.text,
             createdAt: new Date().toString().substring(0, 24)
         });
     });
 
-    // Listen to disconnect event from client/user
+    // Listen to disconnect event from client/user connections
     socket.on('disconnect', () => {
         console.log('user/client was disconnected');
     });
