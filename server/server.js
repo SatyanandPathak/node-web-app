@@ -4,6 +4,8 @@ const publicPath = path.join(__dirname, '../public');
 const socketIO = require('socket.io');
 const http = require('http');
 
+const {generateMessage} = require('./utils/message');
+
 const port = process.env.PORT || 4000;
 
 
@@ -21,16 +23,9 @@ io.on('connection', (socket) => {
     console.log('new user connected');
 
     // Send message from Admin text when someone joins
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: 'Welcome to chat app'
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     // Broadcast that event to others saying new user has joined 
-    socket.broadcast.emit('newMessage', {
-        from : 'Admin',
-        text: 'New User joined',
-        createdAt: new Date().toDateString()
-    });
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User joined'));
 
     // socket.emit emits and event to a single connection
     // Listen to the client createMessage event and publish
@@ -46,11 +41,7 @@ io.on('connection', (socket) => {
     socket.on('createMessage', (message) => {
         console.log('Server: Received a new message:', message);
         // Emit the message to every client connection
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().toString().substring(0, 24)
-        });
+        io.emit('newMessage', generateMessage(message.from, message.text));
     });
 
     // Listen to disconnect event from client/user connections
