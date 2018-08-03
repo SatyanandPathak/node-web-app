@@ -8,7 +8,6 @@ const {generateMessage} = require('./utils/message');
 
 const port = process.env.PORT || 4000;
 
-
 var app = express();
 var server = http.createServer(app);
 
@@ -38,10 +37,11 @@ io.on('connection', (socket) => {
      * 
      */
     // Listen createMessage event from client connections
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log('Server: Received a new message:', message);
         // Emit the message to every client connection
         io.emit('newMessage', generateMessage(message.from, message.text));
+        callback('This is from the Server');
     });
 
     // Listen to disconnect event from client/user connections
