@@ -41,4 +41,17 @@ $(document).ready(function(){
         });
         
     });
+
+    var locationButton = $('#sendLocation').click(function() {
+        if(!navigator.geolocation){
+            return alert('Geolocation not supported by your browser');
+        }
+
+        navigator.geolocation.getCurrentPosition(function(position){
+            // Success case
+            console.log(position)
+        }, function(position) {
+            return alert('Unable to fetch location');
+        });
+    });
 });
