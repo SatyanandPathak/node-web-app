@@ -18,6 +18,15 @@ socket.on('disconnect', function() {
     console.log('disconnected fron server');
 });
 
+socket.on('newLocationMessage', function(message) {
+    var li = jQuery('<li></li>');
+    var a = jQuery('<a target="_blank">My Current Location</a>');
+    li.text(`${message.from}: `);
+    a.attr('href', message.url);
+    li.append(a);
+    jQuery('#messages_list').append(li);
+})
+
 // Acknowledgement using call back
 // socket.emit('createMessage', {
 //     from: 'Satyanand',
@@ -50,6 +59,13 @@ $(document).ready(function(){
         navigator.geolocation.getCurrentPosition(function(position){
             // Success case
             console.log(position)
+            console.log("starting 1111-----", position.coords.latitude)
+            console.log("starting 2222-----", position.coords.longitude)
+            socket.emit("createLocationMessage", {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+
+            });
         }, function(position) {
             return alert('Unable to fetch location');
         });
