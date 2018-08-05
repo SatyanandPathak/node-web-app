@@ -9,10 +9,19 @@ socket.on('connect', function (){
 // Subscribe and receive for any new chats events from the server
 socket.on('newMessage', function(chatMessage){
     var formattedTime = moment(chatMessage.createdAt).format('h:mm a');
-    console.log('Client Received a new chat from Server, Listening to newMessage event:', chatMessage);
-    var li = jQuery('<li></li>');
-    li.text(`${chatMessage.from} ${formattedTime}: ${chatMessage.text}`);
-    jQuery('#messages_list').append(li);
+    // console.log('Client Received a new chat from Server, Listening to newMessage event:', chatMessage);
+    // var li = jQuery('<li></li>');
+    // li.text(`${chatMessage.from} ${formattedTime}: ${chatMessage.text}`);
+    // jQuery('#messages_list').append(li);
+
+    var messageTemplate = $('#message-template').html();
+    var html = Mustache.render(messageTemplate, {
+        from: chatMessage.from,
+        time: formattedTime,
+        text: chatMessage.text,
+    });
+    $('#messages_list').append(html);
+
 });
 
 socket.on('disconnect', function() {
@@ -20,14 +29,25 @@ socket.on('disconnect', function() {
 });
 
 socket.on('newLocationMessage', function(message) {
+    console.log('in render index.js location message')
     var formattedTime = moment(message.createdAt).format('h:mm a');
-    var li = jQuery('<li></li>');
-    var a = jQuery('<a target="_blank">My Current Location</a>');
-    li.text(`${message.from} ${formattedTime}: `);
-    a.attr('href', message.url);
-    li.append(a);
-    jQuery('#messages_list').append(li);
-})
+    // var li = jQuery('<li></li>');
+    // var a = jQuery('<a target="_blank">My Current Location</a>');
+    // li.text(`${message.from} ${formattedTime}: `);
+    // a.attr('href', message.url);
+    // li.append(a);
+    // jQuery('#messages_list').append(li);
+
+    var locationTemplate = $("#location-message-template").html();
+    var html = Mustache.render(locationTemplate, {
+        from: message.from,
+        url: message.url,
+        time: formattedTime
+    });
+    console.log('value of html is===', $("#message_list"));
+    $("#messages_list").append(html);
+
+});
 
 // Acknowledgement using call back
 // socket.emit('createMessage', {
